@@ -1,0 +1,39 @@
+Objetivo general:
+*Simular numéricamente en GNU Octave la desintegración en cadena
+ del uranio-235.
+
+Objetivos particulares:
+*Obtener la masa crítica para la muestra de U-235 de acuerdo con 
+ los parámetros de un reactor nuclear de potencia conocido. 
+*Resolver completamente las ecuaciones de Bateman para la serie
+ del actínido mediante un modelo de Monte Carlo.
+*Obtener la energía de desintegración correspondiente a cada
+ paso en la cadena de desintegración en cuestión. 
+
+Resumen.
+Los elementos conocidos en la naturaleza muestran variaciones en 
+su estructura nuclear. De especial interés son los radioisótopos; 
+estos son átomos de un elemento que difieren del resto de su 
+especie por el número de neutrones en su núcleo y que debido a la 
+interacción nuclear débil se desintegran hasta obtener una es-
+tructura energéticamente más estable. 
+
+Las aplicaciones de los radioisótopos son diversas, nos concier-
+ne su capacidad para generar energía eléctrica. El uranio-235 es
+un radiosótopo natural. Su desintegración se suscita mediante una
+reacción en cadena en la que cada producto de fisión es inesta-
+ble y se descompone en otro elemento en su debido turno. El mo-
+delo matemático que describe la reacción en cadena del U-235, 
+también llamada serie del actínido, son las ecuaciones de
+Bateman.
+
+Para que la reacción en cadena tome lugar se requiere una masa
+mínima de material fisionable conocida como masa crítica. Esta
+puede calcularse a partir del conocimiento de las dimensiones
+geométricas de la muestra. En cada proceso de desintegración se
+libera una cantidad de energía que puede transformarse en elec-
+tricidad. 
+
+Utilizamos GNU Octave para simular la serie del actínido [mediante
+un modelo de Monte Carlo], así mismo, determinamos la masa crítica
+y la energía de desintegración en cada paso del proceso. 

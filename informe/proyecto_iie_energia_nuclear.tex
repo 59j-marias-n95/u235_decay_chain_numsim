@@ -1,0 +1,115 @@
+\documentclass[12pt,letterpaper,twoside]{article}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[spanish]{babel}
+%\usepackage[fixlanguage]{babelbib}
+\usepackage{amsmath,amsfonts,amssymb,float}
+\usepackage{kpfonts}
+\usepackage{multicol}
+\usepackage{enumitem}
+\usepackage{authblk}
+\usepackage{indentfirst}
+
+%\usepackage[numbers]{natbib}
+
+\usepackage[utf8]{inputenc}
+\usepackage{mathrsfs}
+\usepackage{fancyhdr,helvet}
+\usepackage{physics}
+\usepackage{tikz}
+\usepackage{caption}
+\parindent=12.5pt
+\decimalpoint
+
+\newcommand{\helv}{\fontfamily{phv}\fontsize{9}{11}\selectfont}
+
+\pagestyle{fancy}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\fancyhf{}
+\fancyfoot[LE,RO]{\helv\thepage}
+\fancyhead[LO]{\helv\rightmark} 
+\fancyhead[RE]{\helv J. Arias; A. Pineda; R. Gallardo.}
+
+\usepackage{graphicx}
+\usepackage{xcolor}
+
+%\AtBeginDocument{\renewcommand\contentsname{Contenidos}}
+\AtBeginDocument{\renewcommand\refname{Bibliografía}}  
+\AtBeginDocument{\renewcommand\figurename{Figura}}  
+\AtBeginDocument{\renewcommand\tablename{Cuadro}}  
+
+\providecommand{\keywords}[1]{\textbf{\textit{Palabras clave:}} #1}
+
+\title{Simulación numérica de la serie del actínido en GNU Octave con ecuaciones diferenciales estocásticas y Monte Carlo}
+
+\author[$\dagger$]{J. Arias}
+\author[$\dagger$]{A. Pineda}
+\author[$\dagger$]{R. Gallardo}
+\author[$*$]{F. Serrano}
+
+\affil[$\dagger$]{\small Escuela de Física, Facultad de Ciencias, Universidad Nacional Autónoma de Honduras.\newline \textcolor{blue}{\{jmarias, apinedag, roberto.gallardo\}@unah.hn}}
+\affil[$*$]{\small Instituto de Investigación en Energía, Universidad Nacional Autónoma de Honduras.}
+%\affil[2]{\small Escuela de Física, Facultad de Ciencias, Universidad Nacional Autónoma de Honduras.\newline \textcolor{blue}{apinedag@unah.hn}}
+%\affil[3]{\small Escuela de Física, Facultad de Ciencias, Universidad Nacional Autónoma de Honduras.\newline \textcolor{blue}{roberto.gallardo@unah.hn}}
+\date{}
+
+\begin{document}
+\maketitle
+
+    \input{abstract}
+
+    \input{objetivos}
+    
+    \begin{center}
+        \section*{Introducción} 
+        \addcontentsline{toc}{section}{Introducción}
+        \input{introduction}
+    \end{center}
+
+\begin{multicols}{2}
+    
+    \section{Energía nuclear y centrales nucleares}
+        \input{seccion1_roberto.tex}
+    
+    \section{Desintegración nuclear}
+        \input{seccion2_allan.tex}
+       
+    \section{Serie del actínido}\label{actinidoserie}
+        \input{seccion3_jose.tex}
+
+    \section{Implementación en GNU Octave}
+        \input{section4_gnu_octave}
+        
+    \section{Análisis y discusión de los resultados}
+        \input{section5_analisis_discusion}
+
+    \section{Conclusiones}
+        \input{conclusion}
+
+\end{multicols}
+    \section{Anexos}
+        \input{section6_anexos}
+
+\newpage
+
+\nocite{Basdevant.2005} 
+\nocite{Cottingham.2001} 
+\nocite{Das.2009} 
+\nocite{Eidemuller.2021} 
+\nocite{Krane.1987} 
+\nocite{Martin.2009} 
+\nocite{Meyers.2018} 
+\nocite{Murray.2020} 
+\nocite{Sanctis.2016} 
+\nocite{Serrano.2020} 
+\nocite{Podgorsak.2016} 
+\nocite{Eidemuller.2021} 
+\nocite{Guo.2016} 
+\nocite{Koizumi.2021} 
+\nocite{Loch.2013} 
+\nocite{Pratiwi.2021}
+\nocite{MoralesBolio.1974}
+
+\bibliographystyle{ieeetr}
+\bibliography{proyecto_iie_energia_nuclear.bib}
+
+\end{document}
