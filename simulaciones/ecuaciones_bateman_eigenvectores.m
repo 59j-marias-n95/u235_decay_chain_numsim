@@ -1,35 +1,62 @@
 clc
 clear
 
+#Simulación numérica de la cadena de desintegración del uranio 235 mediante
+#el método de eigenvectores. Esta simulación contempla las fracciones de 
+#desintegración en el proceso. 
+
+#Definición del número de átomos en una muestra de 7.2331 kg de U235.
 atomosU235=(7.2331*10e+3)*(1/238.03)*(6.022e+23);
-t=0:100:9e9;
-lambda=[9.7216e-10, 2.2793e+2, 2.0208e-5, 3.1507e-2, 1.3602e+1, 1.7348e+4, 2.2589e+1, 5.5763e+6, 1.1945e+10, 1.0092e+4, 1.6867e5, 4.2037e+7, 7.6058e+4, 0];
 
-ratio=zeros(1,4);
-ratio(2)=0.013800;
-ratio(1)=1-ratio(2);
-ratio(4)=0.99724;
-ratio(3)=1-ratio(4);
+#El número de átomos en atomosU235 se obtiene mediante la obtención de la cantidad
+#de sustancia presente en la muestra. El Uranio 235 tiene un peso molecular de 
+#238.03 g/mol. El número 6.022e+23 corresponde al número de Avogrado de átomos de
+#U235 en una mol de sustancia.
 
-M=zeros(14,14);
+#Definición del intervalo de tiempo sobre la cual se simulará la desintegración.
+#Se corre la variable t, tiempo, desde 0 años hasta 9e+9 años en pasos de 1000
+#años.  
+t=0:1000:9e+9;
+
+#Definición del vectores de coeficientes de desintegración nuclear para cada
+#elemento de la cadena incluyendo el isotopo estable PB207 al que se le atribuye
+#una constante de decaimiento de 0 1/a. Suponiendo una período de semidesintegración
+#infinito, dada su estabilidad nuclear.  
+lambda=[9.846e-10, 1.786e-3, 2.116e-5, 3.184e-2, 1.353e+1, 1.656e+4, 2.213e+1, 5.520e+6, 1.227e+10, 1.009e+4, 2.186e+11, 1.702e+5, 4.236e+7, 7.638e+4, 0];
+
+#Las fracciones de desintegración para los canales alfa y beta en las etapas de
+#desintegración correspondientes al Actinio 227, Polonio 2015 y Bismuto 211.
+ratio=[0.013800, 0.98620, 0.9999977, 0.0000023, 0.99724, 0.00276];
+
+#La matriz del sistema de ecuaciones de orden 15 está compuesto por el siguiente
+#arreglo conformado por los valores del vector lambda y oportunamente incluyendo
+#los del vector ratio
+M=zeros(15,15);
 M(1,1)=-lambda(1); M(2,2)=-lambda(2); M(3,3)=-lambda(3); M(4,4)=-lambda(4);
 M(5,5)=-lambda(5); M(6,6)=-lambda(6); M(7,7)=-lambda(7); M(8,8)=-lambda(8);
-M(9,9)=-lambda(9); M(10,10)=-lambda(10); M(11,11)=-lambda(11); M(12,12)=-lambda(12);
-M(13,13)=-lambda(13);
+M(9,9)=-lambda(9); M(10,10)=-lambda(10); M(11,11)=-lambda(11); 
+M(12,12)=-lambda(12); M(13,13)=-lambda(13); M(14,14)=-lambda(14);
 
-M(2,1)=lambda(1);M(3,2)=lambda(2); M(4,3)=lambda(3); M(5,4)=ratio(1)*lambda(4);
+M(2,1)=lambda(1); M(3,2)=lambda(2); M(4,3)=lambda(3); M(5,4)=ratio(1)*lambda(4);
 M(6,4)=ratio(2)*lambda(4); M(7,5)=lambda(5); M(7,6)=lambda(6);
-M(8,7)=lambda(7); M(9,8)=lambda(8); M(10,9)=lambda(9); 
-M(11,10)=lambda(10); M(12,11)=ratio(3)*lambda(11); M(13,11)=ratio(4)*lambda(11);
-M(14,12)=lambda(12); M(14,13)=lambda(13);
+M(8,7)=lambda(7); M(9,8)=lambda(8); M(10,9)=ratio(3)*lambda(9); 
+M(11,9)=ratio(4)*lambda(9); M(12,10)=lambda(10); M(12,11)=lambda(11);
+M(13,12)=ratio(5)*lambda(12); M(14,12)=ratio(6)*lambda(12); M(15,13)=lambda(13); 
+M(15,14)=lambda(14);
 
+#El cálculo de los eigenvectores y eigenvalores correspondientes para la matriz
+#del sistema surgen de la siguiente evaluación numérica. 
 [vectores,valores]=eig(M);
 
-condicionesIniciales = zeros(14,1);
+#La solución del sistema se compone de una combinación lineal de los vectores
+#propios del sistema, por lo que se desea encontrar los coeficientes que hacen 
+#que la solución satisfaga a las condiciones iniciales
+condicionesIniciales = zeros(15,1);
 condicionesIniciales(1,1)=1;
 Coeficientes=linsolve(vectores,condicionesIniciales);
 
-%
+#solucion mediante fsolve sirve para no lineales y puede ajustarse la precision
+#utiliza método de Newton
 vectores(:,1)=Coeficientes(1)*vectores(:,1);
 vectores(:,2)=Coeficientes(2)*vectores(:,2);
 vectores(:,3)=Coeficientes(3)*vectores(:,3);
@@ -44,9 +71,10 @@ vectores(:,11)=Coeficientes(11)*vectores(:,11);
 vectores(:,12)=Coeficientes(12)*vectores(:,12);
 vectores(:,13)=Coeficientes(13)*vectores(:,13);
 vectores(:,14)=Coeficientes(14)*vectores(:,14);
+vectores(:,15)=Coeficientes(15)*vectores(:,15);
 
-%
-exponenciales=zeros(length(t), 14);
+%{
+exponenciales=zeros(length(t), 15);
 exponenciales(:,1)=exp(valores(1,1)*t);
 exponenciales(:,2)=exp(valores(2,2)*t);
 exponenciales(:,3)=exp(valores(3,3)*t);
@@ -61,6 +89,7 @@ exponenciales(:,11)=exp(valores(11,11)*t);
 exponenciales(:,12)=exp(valores(12,12)*t);
 exponenciales(:,13)=exp(valores(13,13)*t);
 exponenciales(:,14)=exp(valores(14,14)*t);
+exponenciales(:,15)=exp(valores(15,15)*t);
 
 nucleo1 = atomosU235*exponenciales*vectores(1,:)'; nucleo1(nucleo1<=0)=0;
 nucleo2 = atomosU235*exponenciales*vectores(2,:)'; nucleo2(nucleo2<=0)=0;
@@ -76,9 +105,10 @@ nucleo11 = atomosU235*exponenciales*vectores(11,:)'; nucleo11(nucleo11<=0)=0;
 nucleo12 = atomosU235*exponenciales*vectores(12,:)'; nucleo12(nucleo12<=0)=0;
 nucleo13 = atomosU235*exponenciales*vectores(13,:)'; nucleo13(nucleo13<=0)=0;
 nucleo14 = atomosU235*exponenciales*vectores(14,:)'; nucleo14(nucleo14<=0)=0;
+nucleo15 = atomosU235*exponenciales*vectores(15,:)'; nucleo14(nucleo15<=0)=0;
 %} 
  
-%
+%{
 figure(1,"position",[0, 0, 1800, 1500])
 title('Gráficas del número de núcleos en el tiempo para las muestras 1 y 2.')
 subplot(1,2,1)
@@ -176,5 +206,12 @@ semilogx(nucleo14, 'Color', [0 0.4470 0.7410], 'LineWidth',1.5)
 xlabel('t/a')
 ylabel('N(t)/núcleos')
 title('N_{14}')
+
+figure(8,"position",[0, 0, 1800, 1500])
+title('Gráficas del número de núcleos en el tiempo para la muestra 15.')
+semilogx(nucleo15, 'Color', [1 0 0], 'LineWidth',1.5)
+xlabel('t/a')
+ylabel('N(t)/núcleos')
+title('N_{15}')
 
 %}

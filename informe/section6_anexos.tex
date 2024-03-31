@@ -1,7 +1,71 @@
 \subsection{Matrices del sistema}
-La matriz $\Lambda$ de coeficientes de desintegración del sistema es:
+La matriz $\Lambda$ de coeficientes de desintegración del sistema es un arreglo disperso. A continuación se muestra dejando en blanco aquellos elementos valuados en 0:
 
-Para la versión estocástica del sistema, se toma como término determinista la matriz $\mathcal{L}$ y las matrices estocásticas $\mathcal{Y}$ y $\mathcal{X}$ 
+\begin{equation}
+	\Lambda=\left(\begin{smallmatrix}
+		-\lambda_1& & & & & & & & & & & & & & \\
+		 \lambda_1&-\lambda_2& & & & & & & & & & & & & \\
+		 & \lambda_2&-\lambda_3& & & & & & & & & & & & \\
+		 & & \lambda_3&-\lambda_4& & & & & & & & & & & \\
+		 & & &\lambda_{4,\beta}&-\lambda_5& & & & & & & & & & \\
+		 & & &\lambda_{4, \alpha}& &-\lambda_6& & & & & & & & & \\
+		 & & & & \lambda_5& \lambda_6&-\lambda_7& & & & & & & & \\
+		 & & & & & & \lambda_7&-\lambda_8& & & & & & & \\
+		 & & & & & & & \lambda_8&-\lambda_9& & & & & & \\
+		 & & & & & & & &\lambda_{9,\alpha}&-\lambda_{10}& & & & & \\
+		 & & & & & & & &\lambda_{9, \beta}& &-\lambda_{11}& & & & \\
+		 & & & & & & & & & \lambda_{10}&\lambda_{11}&-\lambda_{12}& & & \\
+		 & & & & & & & & & & &\lambda_{12, \beta}&-\lambda_{13}& & \\
+		 & & & & & & & & & & &\lambda_{12, \alpha}& &-\lambda_{14}& \\ 
+		 & & & & & & & & & & & &\lambda_{13}&\lambda_{14}& 0\\
+	\end{smallmatrix}\right)
+\end{equation}\label{matriz_determinista}
+
+Para la versión estocástica del sistema, se toma como término determinista la matriz $\mathcal{L}$ y las matrices estocásticas $\mathcal{X}$, $\mathcal{Y}$ y $\mathcal{Z}$ dadas por los siguientes arreglos dispersos:
+
+\begin{equation}
+	\mathcal{L}=\left(\begin{smallmatrix}
+		-\lambda_1& & & & & & & & & & & \\								%fila 1
+		\lambda_1&-\lambda_2& & & & & & & & & & \\						%fila 2
+		&\lambda_2&-\lambda_3& & & & & & & & & \\						%fila 3
+		& & \lambda_3&-\lambda_4& & & & & & & & \\						%fila 4
+		& & &\lambda_{4, \alpha}&-\lambda_6& & & & & & & \\					%fila 5
+		& & & &\lambda_6 &-\lambda_7& & & & & & \\						%fila 6
+		& & & & &\lambda_7&-\lambda_8& & & & & \\						%fila 7
+		& & & & & &\lambda_8&-\lambda_9& & & & \\						%fila 8
+		& & & & & & &\lambda_{9, \beta}&-\lambda_{11}& & & \\			%fila 9
+		& & & & & & & &\lambda{11}&-\lambda_{12}& & \\					%fila 10
+		& & & & & & & & &\lambda_{12, \beta}&-\lambda_{14}&\\			%fila 11 
+		& & & & & & & & & &\lambda{14}& 0\\						%fila 12
+	\end{smallmatrix}\right)
+\end{equation}\label{matriz_determinista_alternativa}
+
+\begin{equation}
+	\mathcal{X}=\begin{cases}
+		(\lambda_4-2f_{4, \alpha}) & \textrm{En la fila 5, columna 4.}\\
+		-\lambda_5+\lambda_6 & \textrm{En la fila 5, columna 5.}\\
+		\lambda_5-\lambda_6 & \textrm{En la fila 6, columna 5.}
+	\end{cases}
+\end{equation}\label{matriz_estocastica_x}
+
+\begin{equation}
+	\mathcal{Y}=\begin{cases}
+		-(\lambda_9-2\lambda_{9, \alpha}) & \textrm{En la fila 9, columna 8.}\\
+		-\lambda_{10}+\lambda_{11} & \textrm{En la fila 9, columna 9.} \\
+		\lambda_{10}-\lambda_{11} & \textrm{En la fila 10, columna 9.} \\
+	\end{cases}
+\end{equation}\label{matriz_estocastica_y}
+
+\begin{equation}
+	\mathcal{Z}=\begin{cases}
+		(\lambda_{12}-2\lambda_{12, \alpha}) & \textrm{En la fila 11, columna 10.}\\
+		-\lambda_{13}+\lambda_{14} & \textrm{En la fila 11, columna 11.}\\
+		\lambda_{13}-\lambda_{14}  & \textrm{En la fila 12, columna 11.}\\
+	\end{cases}
+\end{equation}\label{matriz_estocastica_z}
+
+\noindent donde se suponen 0 todos los elementos no especificados.
+
 \subsection{Tablas de coeficientes}
 A continuación se presentan los coeficientes obtenidos para las soluciones de Bateman. 
 \begin{center}
