@@ -22,7 +22,7 @@ t=0:1000:9e+9;
 #elemento de la cadena incluyendo el isotopo estable PB207 al que se le atribuye
 #una constante de decaimiento de 0 1/a. Suponiendo una período de semidesintegración
 #infinito, dada su estabilidad nuclear.  
-lambda=[9.846e-10, 1.786e-3, 2.116e-5, 3.184e-2, 1.353e+1, 1.656e+4, 2.213e+1, 5.520e+6, 1.227e+10, 1.009e+4, 2.186e+11, 1.702e+5, 4.236e+7, 7.638e+4, 0];
+lambda=[9.846e-10, 1.786e-3, 2.116e-5, 3.184e-2, 1.353e+1, 1.656e+4, 2.213e+1, 5.520e+6, 1.227e+10, 1.009e+4, 2.186e+11, 1.702e+5, 4.236e+7, 7.638e+4, 1e-18];
 
 #Las fracciones de desintegración para los canales alfa y beta en las etapas de
 #desintegración correspondientes al Actinio 227, Polonio 2015 y Bismuto 211.
