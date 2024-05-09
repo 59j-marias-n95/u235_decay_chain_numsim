@@ -1,8 +1,6 @@
 clc
 clear
 
-warning("off", "warning: passing floating-point values to sym is dangerous, see 'help sym'");
-
 #Simulación numérica de la cadena de desintegración del uranio 235 mediante
 #el método de Transformada de Laplace. Esta simulación contempla las fracciones de 
 #desintegración en el proceso. 
@@ -24,7 +22,7 @@ warning("off", "warning: passing floating-point values to sym is dangerous, see 
 #elemento de la cadena incluyendo el isotopo estable PB207 al que se le atribuye
 #una constante de decaimiento de 0 1/a. Suponiendo una período de semidesintegración
 #infinito, dada su estabilidad nuclear.  
-lambda = [9.846e-10, 1.786e-3, 2.116e-5, 3.184e-2, 1.353e+1, 1.656e+4, 2.213e+1, 5.520e+6, 1.227e+10, 1.009e+6, 2.186e+11, 1.702e+5, 4.236e+7, 7.638e+4, 1e-16];
+lambda = [9.846e-10, 1.786e-3, 2.116e-5, 3.184e-2, 1.353e+1, 1.656e+4, 2.213e+1, 5.520e+6, 1.227e+10, 1.009e+6, 2.186e+11, 1.702e+5, 4.236e+7, 7.638e+4, 0];
 
 #Las fracciones de desintegración para los canales alfa y beta en las etapas de
 #desintegración correspondientes al Actinio 227, Polonio 2015 y Bismuto 211.
@@ -41,8 +39,8 @@ Y = [Y01, Y02, Y03, Y04, Y05, Y06, Y07, Y08, Y09, Y10, Y11, Y12, Y13, Y14, Y15];
 y00 = [1.00; zeros(14,1)];
 
 #Definición del lado derecho del sistema de ecuaciones "right hand side" 
-%RHS = zeros(15, 1);
-
+RHS = zeros(15, 1);
+%{
 RHS = [0;
        lambda(1) * Y01;
        lambda(2) * Y02;
@@ -59,10 +57,11 @@ RHS = [0;
        ratio(6) * lambda(12) * Y12;
        lambda(13) * Y13 + lambda(14) * Y14
        ];
+%}
 
 #Definición del lado izquierdo del sistema de ecuaciones conteniendo todas las operaciones
 #y combinaciones de las variables transformadas bajo laplace
-%{
+%
 LHS = [s * Y01 - y00(1) + lambda(1) * Y01;
        s * Y02 - y00(2) + lambda(2) * Y02 - lambda(1) * Y01;
        s * Y03 - y00(3) + lambda(3) * Y03 - lambda(2) * Y02;
@@ -79,8 +78,8 @@ LHS = [s * Y01 - y00(1) + lambda(1) * Y01;
        s * Y14 - y00(14) + lambda(14) * Y14 - ratio(6) * lambda(12) * Y12;
        s * Y15 - y00(15) + lambda(15) * Y15 - lambda(13) * Y13 - lambda(14) * Y14
       ];      
-%}
-
+%
+%{
 LHS = [s * Y01 - y00(1) + lambda(1) * Y01;
        s * Y02 - y00(2) + lambda(2) * Y02;
        s * Y03 - y00(3) + lambda(3) * Y03;
@@ -97,6 +96,7 @@ LHS = [s * Y01 - y00(1) + lambda(1) * Y01;
        s * Y14 - y00(14) + lambda(14) * Y14;
        s * Y15 - y00(15) + lambda(15) * Y15
       ];
+%}
 
 #Solución del sistema de ecuaciones en el espacio de Laplace
 for k = 1:15
@@ -105,7 +105,7 @@ endfor
 
 for k = 1:15
   for j = 1:k-1
-    SOL(k) = eval(simplify(subs(SOL(k), Y(1:k-j), SOL(1:k-j))));
+    SOL(k) = simplify(subs(SOL(k), Y(1:k-j), SOL(1:k-j)));
   endfor
 endfor
 SOL = transpose(SOL);

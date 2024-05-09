@@ -28,7 +28,7 @@
 \fancyhf{}
 \fancyfoot[LE,RO]{\helv\thepage}
 \fancyhead[LO]{\helv\rightmark} 
-\fancyhead[RE]{\helv J. Arias; A. Pineda; R. Gallardo.}
+\fancyhead[RE]{\helv J. Arias, F. Serrano}
 
 \usepackage{graphicx}
 \usepackage{xcolor}
@@ -40,18 +40,14 @@
 
 \providecommand{\keywords}[1]{\textbf{\textit{Palabras clave:}} #1}
 
-\title{Simulación numérica de la serie del actínido en GNU Octave con ecuaciones diferenciales estocásticas y Monte Carlo}
+\title{Simulación numérica de la serie del actínido en GNU Octave con ecuaciones diferenciales estocásticas}
 
 \author[$\dagger$]{J. Arias}
-\author[$\dagger$]{A. Pineda}
-\author[$\dagger$]{R. Gallardo}
 \author[$*$]{F. Serrano}
 
-\affil[$\dagger$]{\small Escuela de Física, Facultad de Ciencias, Universidad Nacional Autónoma de Honduras.\newline \textcolor{blue}{\{jmarias, apinedag, roberto.gallardo\}@unah.hn}}
+\affil[$\dagger$]{\small Escuela de Física, Facultad de Ciencias, Universidad Nacional Autónoma de Honduras.\newline \textcolor{blue}{jmarias@unah.hn}}
 \affil[$*$]{\small Instituto de Investigación en Energía, Universidad Nacional Autónoma de Honduras.}
-%\affil[2]{\small Escuela de Física, Facultad de Ciencias, Universidad Nacional Autónoma de Honduras.\newline \textcolor{blue}{apinedag@unah.hn}}
-%\affil[3]{\small Escuela de Física, Facultad de Ciencias, Universidad Nacional Autónoma de Honduras.\newline \textcolor{blue}{roberto.gallardo@unah.hn}}
-\date{}
+\date{\today}
 
 \begin{document}
 \maketitle
@@ -59,7 +55,7 @@
     \input{abstract}
 
     \input{objetivos}
-    
+    \newpage
     \begin{center}
         \section*{Introducción} 
         \addcontentsline{toc}{section}{Introducción}
@@ -68,14 +64,14 @@
 
 \begin{multicols}{2}
     
-    \section{Energía nuclear y centrales nucleares}
-        \input{seccion1_roberto.tex}
+    \section{Reacciones nucleares}
+        \input{seccion1.tex}
     
-    \section{Desintegración nuclear}
-        \input{seccion2_allan.tex}
+    \section{Modos de desintegración nuclear}
+        \input{seccion2.tex}
        
     \section{Serie del actínido}\label{actinidoserie}
-        \input{seccion3_jose.tex}
+        \input{seccion3.tex}
 
     \section{Implementación en GNU Octave}
         \input{section4_gnu_octave}
@@ -91,24 +87,6 @@
         \input{section6_anexos}
 
 \newpage
-
-\nocite{Basdevant.2005} 
-\nocite{Cottingham.2001} 
-\nocite{Das.2009} 
-\nocite{Eidemuller.2021} 
-\nocite{Krane.1987} 
-\nocite{Martin.2009} 
-\nocite{Meyers.2018} 
-\nocite{Murray.2020} 
-\nocite{Sanctis.2016} 
-\nocite{Serrano.2020} 
-\nocite{Podgorsak.2016} 
-\nocite{Eidemuller.2021} 
-\nocite{Guo.2016} 
-\nocite{Koizumi.2021} 
-\nocite{Loch.2013} 
-\nocite{Pratiwi.2021}
-\nocite{MoralesBolio.1974}
 
 \bibliographystyle{ieeetr}
 \bibliography{proyecto_iie_energia_nuclear.bib}
