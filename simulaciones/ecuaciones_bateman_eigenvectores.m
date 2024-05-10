@@ -3,16 +3,11 @@ clear
 format longe;
 
 #Simulación numérica de la cadena de desintegración del uranio 235 mediante
-#el método de eigenvectores. Esta simulación contempla las fracciones de 
-#desintegración en el proceso. 
+#el método de eigenvectores. 
+tiempo0 = clock();
 
 #Definición del número de átomos en una muestra de 7.2331 kg de U235.
 atomosU235=(7.2331*10e+3)*(1/238.03)*(6.022e+23);
-
-#El número de átomos en atomosU235 se obtiene mediante la obtención de la cantidad
-#de sustancia presente en la muestra. El Uranio 235 tiene un peso molecular de 
-#238.03 g/mol. El número 6.022e+23 corresponde al número de Avogrado de átomos de
-#U235 en una mol de sustancia.
 
 #Definición del intervalo de tiempo sobre la cual se simulará la desintegración.
 #Se corre la variable t, tiempo, desde 0 años hasta 9e+9 años en pasos de 1000
@@ -55,42 +50,17 @@ M(15,14)=lambda(14);
 condicionesIniciales = [1; zeros(14,1)];
 Coeficientes=linsolve(vectores,condicionesIniciales);
 
-%
-Vectores(:,1)=Coeficientes(1)*vectores(:,1);
-Vectores(:,2)=Coeficientes(2)*vectores(:,2);
-Vectores(:,3)=Coeficientes(3)*vectores(:,3);
-Vectores(:,4)=Coeficientes(4)*vectores(:,4);
-Vectores(:,5)=Coeficientes(5)*vectores(:,5);
-Vectores(:,6)=Coeficientes(6)*vectores(:,6);
-Vectores(:,7)=Coeficientes(7)*vectores(:,7);
-Vectores(:,8)=Coeficientes(8)*vectores(:,8);
-Vectores(:,9)=Coeficientes(9)*vectores(:,9);
-Vectores(:,10)=Coeficientes(10)*vectores(:,10);
-Vectores(:,11)=Coeficientes(11)*vectores(:,11);
-Vectores(:,12)=Coeficientes(12)*vectores(:,12);
-Vectores(:,13)=Coeficientes(13)*vectores(:,13);
-Vectores(:,14)=Coeficientes(14)*vectores(:,14);
-Vectores(:,15)=Coeficientes(15)*vectores(:,15);
-%}
+for i = 1:15
+  Vectores(:,i)=Coeficientes(i)*vectores(:,i);
+endfor
+
+tiempo_transcurrido = etime(clock(), tiempo0);
+
+for i = 1:15
+  exponenciales(:,i)=exp(valores(i,i)*t);
+endfor
 
 %{
-exponenciales=zeros(length(t), 15);
-exponenciales(:,1)=exp(valores(1,1)*t);
-exponenciales(:,2)=exp(valores(2,2)*t);
-exponenciales(:,3)=exp(valores(3,3)*t);
-exponenciales(:,4)=exp(valores(4,4)*t);
-exponenciales(:,5)=exp(valores(5,5)*t);
-exponenciales(:,6)=exp(valores(6,6)*t);
-exponenciales(:,7)=exp(valores(7,7)*t);
-exponenciales(:,8)=exp(valores(8,8)*t);
-exponenciales(:,9)=exp(valores(9,9)*t);
-exponenciales(:,10)=exp(valores(10,10)*t);
-exponenciales(:,11)=exp(valores(11,11)*t);
-exponenciales(:,12)=exp(valores(12,12)*t);
-exponenciales(:,13)=exp(valores(13,13)*t);
-exponenciales(:,14)=exp(valores(14,14)*t);
-exponenciales(:,15)=exp(valores(15,15)*t);
-
 nucleo1 = atomosU235*exponenciales*Vectores(1,:)'; nucleo1(nucleo1<=0)=0;
 nucleo2 = atomosU235*exponenciales*Vectores(2,:)'; nucleo2(nucleo2<=0)=0;
 nucleo3 = atomosU235*exponenciales*Vectores(3,:)'; nucleo3(nucleo3<=0)=0;
@@ -106,7 +76,7 @@ nucleo12 = atomosU235*exponenciales*Vectores(12,:)'; nucleo12(nucleo12<=0)=0;
 nucleo13 = atomosU235*exponenciales*Vectores(13,:)'; nucleo13(nucleo13<=0)=0;
 nucleo14 = atomosU235*exponenciales*Vectores(14,:)'; nucleo14(nucleo14<=0)=0;
 nucleo15 = atomosU235*exponenciales*Vectores(15,:)'; nucleo14(nucleo15<=0)=0;
-%
+%{
  
 %Figura 1
 figure(1,"position",[0, 0, 1800, 1500])
@@ -123,7 +93,7 @@ xlabel('t/a', 'fontsize', 12)
 ylabel('N(t)/núcleos', 'fontsize', 12)
 legend('N_{2}: Th231')
 figure1 = axes('visible', 'off', 'title', 'Gráficas del número de núcleos en el tiempo para las muestras 1 y 2.', 'fontsize', 14);
-
+%
 %Figura 2
 figure(2,"position",[0, 0, 1800, 1500])
 hold on
