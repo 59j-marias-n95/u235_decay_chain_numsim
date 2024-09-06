@@ -1,5 +1,5 @@
 # Simulación numérica estocástica de la desintegración en cadena de U235
-![Alt Text](https://github.com/59j-marias-n95/u235_decay_chain_numsim/blob/main/figuras/cadenaluz.png)
+![Alt Text](https://github.com/59j-marias-n95/u235_decay_chain_numsim/blob/main/informe/figuras/cadenaluz.png)
 
 Bienvenido al repositorio para el proyecto de investigación en el voluntariado subsecuente al curso de Introducción a la simulación numérica con GNU Octave propiciado por el Instituto de Investigación en Energía de la Universidad Nacional Autónoma de Honduras. 
 En este proyecto se busca construir una simulación numérica del sistema de ecuaciones completo de la desintegración en cadena del radioisótopo Uranio-235.
