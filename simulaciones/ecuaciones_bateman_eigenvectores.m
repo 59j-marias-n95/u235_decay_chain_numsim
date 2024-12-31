@@ -3,21 +3,21 @@ clear
 format longe;
 
 #Simulación numérica de la cadena de desintegración del uranio 235 mediante
-#el método de eigenvectores. 
-tiempo0 = clock();
+#el método de eigenvectores.
+%tiempo0 = clock();
 
 #Definición del número de átomos en una muestra de 7.2331 kg de U235.
-atomosU235=(7.2331*10e+3)*(1/238.03)*(6.022e+23);
+atomosU235=(7.2331e+03)*(1/238.03)*(6.022e+23);
 
 #Definición del intervalo de tiempo sobre la cual se simulará la desintegración.
 #Se corre la variable t, tiempo, desde 0 años hasta 9e+9 años en pasos de 1000
-#años.  
+#años.
 t=0:1000:9.99e+9;
 
 #Definición del vectores de coeficientes de desintegración nuclear para cada
 #elemento de la cadena incluyendo el isotopo estable PB207 al que se le atribuye
 #una constante de decaimiento de 0 1/a. Suponiendo una período de semidesintegración
-#infinito, dada su estabilidad nuclear.  
+#infinito, dada su estabilidad nuclear.
 lambda=[9.846e-10, 1.786e-3, 2.116e-5, 3.184e-2, 1.353e+1, 1.656e+4, 2.213e+1, 5.520e+6, 1.227e+10, 1.009e+4, 2.186e+11, 1.702e+5, 4.236e+7, 7.638e+4, 0];
 
 #Las fracciones de desintegración para los canales alfa y beta en las etapas de
@@ -30,22 +30,22 @@ ratio=[0.013800, 0.98620, 0.9999977, 0.0000023, 0.99724, 0.00276];
 M=zeros(15,15);
 M(1,1)=-lambda(1); M(2,2)=-lambda(2); M(3,3)=-lambda(3); M(4,4)=-lambda(4);
 M(5,5)=-lambda(5); M(6,6)=-lambda(6); M(7,7)=-lambda(7); M(8,8)=-lambda(8);
-M(9,9)=-lambda(9); M(10,10)=-lambda(10); M(11,11)=-lambda(11); 
+M(9,9)=-lambda(9); M(10,10)=-lambda(10); M(11,11)=-lambda(11);
 M(12,12)=-lambda(12); M(13,13)=-lambda(13); M(14,14)=-lambda(14);
 
 M(2,1)=lambda(1); M(3,2)=lambda(2); M(4,3)=lambda(3); M(5,4)=ratio(1)*lambda(4);
 M(6,4)=ratio(2)*lambda(4); M(7,5)=lambda(5); M(7,6)=lambda(6);
-M(8,7)=lambda(7); M(9,8)=lambda(8); M(10,9)=ratio(3)*lambda(9); 
+M(8,7)=lambda(7); M(9,8)=lambda(8); M(10,9)=ratio(3)*lambda(9);
 M(11,9)=ratio(4)*lambda(9); M(12,10)=lambda(10); M(12,11)=lambda(11);
-M(13,12)=ratio(5)*lambda(12); M(14,12)=ratio(6)*lambda(12); M(15,13)=lambda(13); 
+M(13,12)=ratio(5)*lambda(12); M(14,12)=ratio(6)*lambda(12); M(15,13)=lambda(13);
 M(15,14)=lambda(14);
 
 #El cálculo de los eigenvectores y eigenvalores correspondientes para la matriz
-#del sistema surgen de la siguiente evaluación numérica. 
+#del sistema surgen de la siguiente evaluación numérica.
 [vectores,valores]=eig(M);
 
 #La solución del sistema se compone de una combinación lineal de los vectores
-#propios del sistema, por lo que se desea encontrar los coeficientes que hacen 
+#propios del sistema, por lo que se desea encontrar los coeficientes que hacen
 #que la solución satisfaga a las condiciones iniciales
 condicionesIniciales = [1; zeros(14,1)];
 Coeficientes=linsolve(vectores,condicionesIniciales);
@@ -54,13 +54,13 @@ for i = 1:15
   Vectores(:,i)=Coeficientes(i)*vectores(:,i);
 endfor
 
-tiempo_transcurrido = etime(clock(), tiempo0);
+%tiempo_transcurrido = etime(clock(), tiempo0);
 
 for i = 1:15
   exponenciales(:,i)=exp(valores(i,i)*t);
 endfor
 
-%{
+%
 nucleo1 = atomosU235*exponenciales*Vectores(1,:)'; nucleo1(nucleo1<=0)=0;
 nucleo2 = atomosU235*exponenciales*Vectores(2,:)'; nucleo2(nucleo2<=0)=0;
 nucleo3 = atomosU235*exponenciales*Vectores(3,:)'; nucleo3(nucleo3<=0)=0;
@@ -77,7 +77,7 @@ nucleo13 = atomosU235*exponenciales*Vectores(13,:)'; nucleo13(nucleo13<=0)=0;
 nucleo14 = atomosU235*exponenciales*Vectores(14,:)'; nucleo14(nucleo14<=0)=0;
 nucleo15 = atomosU235*exponenciales*Vectores(15,:)'; nucleo14(nucleo15<=0)=0;
 %{
- 
+
 %Figura 1
 figure(1,"position",[0, 0, 1800, 1500])
 hold on
