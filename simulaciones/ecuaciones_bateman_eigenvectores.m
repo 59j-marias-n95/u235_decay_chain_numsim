@@ -1,5 +1,5 @@
-clc
-clear
+%clc
+%clear
 format longe;
 
 #Simulación numérica de la cadena de desintegración del uranio 235 mediante
@@ -7,12 +7,13 @@ format longe;
 %tiempo0 = clock();
 
 #Definición del número de átomos en una muestra de 7.2331 kg de U235.
-atomosU235=(7.2331e+03)*(1/238.03)*(6.022e+23);
+%atomosU235=(7.2331e+03)*(1/238.03)*(6.022e+23);
+atomosU235 = 9.999e+12;
 
 #Definición del intervalo de tiempo sobre la cual se simulará la desintegración.
 #Se corre la variable t, tiempo, desde 0 años hasta 9e+9 años en pasos de 1000
 #años.
-t=0:1000:9.99e+9;
+t=0:220:2.2e+6;
 
 #Definición del vectores de coeficientes de desintegración nuclear para cada
 #elemento de la cadena incluyendo el isotopo estable PB207 al que se le atribuye
@@ -47,7 +48,7 @@ M(15,14)=lambda(14);
 #La solución del sistema se compone de una combinación lineal de los vectores
 #propios del sistema, por lo que se desea encontrar los coeficientes que hacen
 #que la solución satisfaga a las condiciones iniciales
-condicionesIniciales = [1; zeros(14,1)];
+condicionesIniciales = [atomosU235; zeros(14,1)];
 Coeficientes=linsolve(vectores,condicionesIniciales);
 
 for i = 1:15
@@ -61,25 +62,25 @@ for i = 1:15
 endfor
 
 %
-nucleo1 = atomosU235*exponenciales*Vectores(1,:)'; nucleo1(nucleo1<=0)=0;
-nucleo2 = atomosU235*exponenciales*Vectores(2,:)'; nucleo2(nucleo2<=0)=0;
-nucleo3 = atomosU235*exponenciales*Vectores(3,:)'; nucleo3(nucleo3<=0)=0;
-nucleo4 = atomosU235*exponenciales*Vectores(4,:)'; nucleo4(nucleo4<=0)=0;
-nucleo5 = atomosU235*exponenciales*Vectores(5,:)'; nucleo5(nucleo5<=0)=0;
-nucleo6 = atomosU235*exponenciales*Vectores(6,:)'; nucleo6(nucleo6<=0)=0;
-nucleo7 = atomosU235*exponenciales*Vectores(7,:)'; nucleo7(nucleo7<=0)=0;
-nucleo8 = atomosU235*exponenciales*Vectores(8,:)'; nucleo8(nucleo8<=0)=0;
-nucleo9 = atomosU235*exponenciales*Vectores(9,:)'; nucleo9(nucleo9<=0)=0;
-nucleo10 = atomosU235*exponenciales*Vectores(10,:)'; nucleo10(nucleo10<=0)=0;
-nucleo11 = atomosU235*exponenciales*Vectores(11,:)'; nucleo11(nucleo11<=0)=0;
-nucleo12 = atomosU235*exponenciales*Vectores(12,:)'; nucleo12(nucleo12<=0)=0;
-nucleo13 = atomosU235*exponenciales*Vectores(13,:)'; nucleo13(nucleo13<=0)=0;
-nucleo14 = atomosU235*exponenciales*Vectores(14,:)'; nucleo14(nucleo14<=0)=0;
-nucleo15 = atomosU235*exponenciales*Vectores(15,:)'; nucleo14(nucleo15<=0)=0;
+nucleo1 = exponenciales*Vectores(1,:)';
+nucleo2 = exponenciales*Vectores(2,:)';
+nucleo3 = exponenciales*Vectores(3,:)';
+nucleo4 = exponenciales*Vectores(4,:)';
+nucleo5 = exponenciales*Vectores(5,:)';
+nucleo6 = exponenciales*Vectores(6,:)';
+nucleo7 = exponenciales*Vectores(7,:)';
+nucleo8 = exponenciales*Vectores(8,:)';
+nucleo9 = exponenciales*Vectores(9,:)';
+nucleo10 = exponenciales*Vectores(10,:)';
+nucleo11 = exponenciales*Vectores(11,:)';
+nucleo12 = exponenciales*Vectores(12,:)';
+nucleo13 = exponenciales*Vectores(13,:)';
+nucleo14 = exponenciales*Vectores(14,:)';
+nucleo15 = exponenciales*Vectores(15,:)';
+%
 %{
-
 %Figura 1
-figure(1,"position",[0, 0, 1800, 1500])
+figure(1,"position",[0, 0, 1200, 1000])
 hold on
 subplot(2,1,1)
 semilogx(nucleo1, 'Color', [1 0 0], 'LineWidth', 2)
@@ -95,7 +96,7 @@ legend('N_{2}: Th231')
 figure1 = axes('visible', 'off', 'title', 'Gráficas del número de núcleos en el tiempo para las muestras 1 y 2.', 'fontsize', 14);
 %
 %Figura 2
-figure(2,"position",[0, 0, 1800, 1500])
+figure(2,"position",[0, 0, 1200, 1000])
 hold on
 subplot(2,1,1)
 semilogx(nucleo3, 'Color', [0 0 1], 'LineWidth', 2)
@@ -112,7 +113,7 @@ figure2 = axes('visible', 'off', 'title', 'Gráficas del número de núcleos en 
 hold off
 
 %Figura 3
-figure(3,"position",[0, 0, 1800, 1500])
+figure(3,"position",[0, 0, 1200, 1000])
 hold on
 subplot(2,1,1)
 semilogx(nucleo5, 'Color', [1 0 1], 'LineWidth', 2)
@@ -129,7 +130,7 @@ figure3 = axes('visible', 'off', 'title', 'Gráficas del número de núcleos en 
 hold off
 
 %Figura 4
-figure(4,"position",[0, 0, 1800, 1500])
+figure(4,"position",[0, 0, 1200, 1000])
 hold on
 subplot(2,1,1)
 semilogx(nucleo7, 'Color', [0 0 0], 'LineWidth', 2)
@@ -146,7 +147,7 @@ figure4 = axes('visible', 'off', 'title', 'Gráficas del número de núcleos en 
 hold off
 
 %Figura 5
-figure(5,"position",[0, 0, 1800, 1500])
+figure(5,"position",[0, 0, 1200, 1000])
 hold on
 subplot(2,1,1)
 semilogx(nucleo9, 'Color', [0.3010 0.7450 0.9330], 'LineWidth', 2)
@@ -163,7 +164,7 @@ figure5 = axes('visible', 'off', 'title', 'Gráficas del número de núcleos en 
 hold off
 
 %Figura 6
-figure(6,"position",[0, 0, 1800, 1500])
+figure(6,"position",[0, 0, 1200, 1000])
 hold on
 subplot(2,1,1)
 semilogx(nucleo11, 'Color', [0.4940 0.1840 0.5560], 'LineWidth', 2)
@@ -180,7 +181,7 @@ figure6 = axes('visible', 'off', 'title', 'Gráficas del número de núcleos en 
 hold off
 
 %Figura 7
-figure(7,"position",[0, 0, 1800, 1500])
+figure(7,"position",[0, 0, 1200, 1000])
 hold on
 subplot(2,1,1)
 semilogx(nucleo13, 'Color', [0.8500 0.3250 0.0980], 'LineWidth', 2)
@@ -197,7 +198,7 @@ figure7 = axes('visible', 'off', 'title', 'Gráficas del número de núcleos en 
 hold off
 
 %Figura 8
-figure(8,"position",[0, 0, 1800, 1500])
+figure(8,"position",[0, 0, 1200, 1000])
 subplot(1,1,1)
 semilogx(nucleo15, 'Color', [1 0 0], 'LineWidth', 2)
 xlabel('t/a', 'fontsize', 12)
