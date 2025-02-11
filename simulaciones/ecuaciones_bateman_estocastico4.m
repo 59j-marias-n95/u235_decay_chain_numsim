@@ -1,5 +1,5 @@
-%clear
-%clc
+clear
+clc
 format longe;
 
 %tiempo0 = clock();
@@ -30,8 +30,8 @@ M(15,14)=lambda(14);
 DeltaN = [[-1, 1, zeros(1, 13)]', [0, -1, 1, zeros(1, 12)]', [zeros(1, 2), -1, 1,zeros(1, 11)]', [zeros(1, 3), -1, 1, 1,zeros(1, 9)]',[zeros(1, 4), -1, 0, 1, zeros(1, 8)]', [zeros(1, 5), -1, 1, zeros(1, 8)]', [zeros(1, 6), -1, 1, zeros(1, 7)]', [zeros(1, 7), -1, 1, zeros(1, 6)]',[zeros(1, 8), -1, 1, 1, zeros(1, 4)]', [zeros(1, 9), -1, 0, 1, zeros(1, 3)]', [zeros(1, 10), -1, 1, zeros(1, 3)]', [zeros(1, 11), -1, 1, 1, 0]',[zeros(1, 12), -1, 0, 1]', [zeros(1, 13), -1, 1]', zeros(1, 15)'];
 
 %La escala de tiempo
-m = 1.00e+03;
-deltat = 2.0e+02;
+m = 1.0e3;
+deltat = 2.0e2;
 
 %El numero inicial de particulas: (7.2331e+03)*(1/238.03)*(6.022e+23)
 %atomosu235 = (7.2331e+03)*(1/238.03)*(6.022e+23);
@@ -44,16 +44,12 @@ DeltaW2 = zeros(15, 2);
 DeltaW3 = zeros(15, 2);
 
 %La matriz de evolucion del sistema
+%La matriz de evolucion del sistema
 for a = 1:m
   %Probabilidad de que la kesima sustancia se desintegre
-  for k = 1:15
-    P(k,1) = lambda(k)*N(k,a)*deltat;
-    P2(k,1) = lambda(k)*N2(k,a)*deltat;
-    P3(k,1) = lambda(k)*N3(k,a)*deltat;
-  endfor
-  P = P./norm(P);
-  P2 = P2./norm(P2);
-  P3 = P3./norm(P3);
+  P(:, a) = (lambda(:).*N(:,a).*deltat)./(norm(lambda(:).*N(:,a).*deltat));
+  P2(:, a) = (lambda(:).*N2(:,a).*deltat)./(norm(lambda(:).*N2(:,a).*deltat));
+  P3(:, a) = (lambda(:).*N3(:,a).*deltat)./(norm(lambda(:).*N3(:,a).*deltat));
 
   Sigmat = zeros(15, 15);
   Sigmat2 = zeros(15, 15);
@@ -61,31 +57,50 @@ for a = 1:m
 
   %Calculo de la covarianza matriz
   for k = 1:15
-    Sigmat = Sigmat + P(k,1)*DeltaN(1:15, k)*DeltaN(1:15, k)';
-    Sigmat2 = Sigmat2 + P2(k,1)*DeltaN(1:15, k)*DeltaN(1:15, k)';
-    Sigmat3 = Sigmat3 + P3(k,1)*DeltaN(1:15, k)*DeltaN(1:15, k)';
+    Sigmat = Sigmat + P(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
+    Sigmat2 = Sigmat2 + P2(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
+    Sigmat3 = Sigmat3 + P3(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
   endfor
   [X, sigmat] = lu(Sigmat);
-  sigmat = sqrt(deltat)*sigmat;
-
   [X, sigmat2] = lu(Sigmat2);
-  sigmat2 = sqrt(deltat)*sigmat2;
-
   [X, sigmat3] = lu(Sigmat3);
-  sigmat3 = sqrt(deltat)*sigmat3;
+
+  Y1(:,a) = N(:, a) + sigmat*(DeltaW(:,2)-DeltaW(:,1));
+  Y2(:,a) = N2(:, a) + sigmat2*(DeltaW2(:,2)-DeltaW2(:,1));
+  Y3(:,a) = N3(:, a) + sigmat3*(DeltaW3(:,2)-DeltaW3(:,1));
+
+  %Probabilidad de que la kesima sustancia se desintegre
+  PY(:, a) = (lambda(:).*Y1(:,a).*deltat)./(norm(lambda(:).*Y1(:,a).*deltat));
+  PY2(:, a) = (lambda(:).*Y2(:,a).*deltat)./(norm(lambda(:).*Y2(:,a).*deltat));
+  PY3(:, a) = (lambda(:).*Y3(:,a).*deltat)./(norm(lambda(:).*Y3(:,a).*deltat));
+
+  SigmatY = zeros(15, 15);
+  SigmatY2 = zeros(15, 15);
+  SigmatY3 = zeros(15, 15);
+
+  %Calculo de la covarianza matriz
+  for k = 1:15
+    SigmatY = SigmatY + PY(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
+    SigmatY2 = SigmatY2 + PY2(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
+    SigmatY3 = SigmatY3 + PY3(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
+  endfor
+
+  [X, sigmatY] = lu(SigmatY);
+  [X, sigmatY2] = lu(Sigmat2);
+  [X, sigmatY3] = lu(Sigmat3);
 
   %El ruido blanco
-  N(1:15, a + 1) = pinv(eye(15) - deltat*M)*(N(1:15, a) + sigmat*(DeltaW(1:15, 2) - DeltaW(1:15, 1)));
-  DeltaW(1:15, 1) = DeltaW(1:15, 2);
-  DeltaW(1:15, 2) = sqrt(deltat)*(rand(15,1));
+N(:,a+1)=pinv(eye(15)-deltat*M)*(N(:,a)+sigmat*(DeltaW(:,2)-DeltaW(:,1))*deltat+0.5*(sigmatY-sigmat)*(((DeltaW(:,2)-DeltaW(:,1))/sqrt(deltat))'*((DeltaW(:,2)-DeltaW(:,1))/sqrt(deltat))-1)*(ones(15,1))*deltat);
+  DeltaW(:, 1) = DeltaW(1:15, 2);
+  DeltaW(:, 2) = sqrt(deltat)*rand(15,1);
 
-  N2(1:15, a + 1) = pinv(eye(15) - deltat*M)*(N2(1:15, a) + sigmat2*(DeltaW2(1:15, 2) - DeltaW2(1:15, 1)));
-  DeltaW2(1:15, 1) = DeltaW2(1:15, 2);
-  DeltaW2(1:15, 2) = sqrt(deltat)*(rand(15,1));
+N2(:,a+1)=pinv(eye(15)-deltat*M)*(N2(:,a)+sigmat2*(DeltaW2(:,2)-DeltaW2(:,1))*deltat+0.5*(sigmatY2-sigmat2)*(((DeltaW2(:,2)-DeltaW2(:,1))/sqrt(deltat))'*((DeltaW2(:,2)-DeltaW2(:,1))/sqrt(deltat))-1)*(ones(15,1))*deltat);
+  DeltaW2(:, 1) = DeltaW2(1:15, 2);
+  DeltaW2(:, 2) = sqrt(deltat)*rand(15,1);
 
-  N3(1:15, a + 1) = pinv(eye(15) - deltat*M)*(N3(1:15, a) + sigmat3*(DeltaW3(1:15, 2) - DeltaW3(1:15, 1)));
-  DeltaW3(1:15, 1) = DeltaW3(1:15, 2);
-  DeltaW3(1:15, 2) = sqrt(deltat)*(rand(15,1));
+N3(:,a+1)=pinv(eye(15)-deltat*M)*(N3(:,a)+sigmat3*(DeltaW3(:,2)-DeltaW3(:,1))*deltat+0.5*(sigmatY3-sigmat3)*(((DeltaW3(:,2)-DeltaW3(:,1))/sqrt(deltat))'*((DeltaW3(:,2)-DeltaW3(:,1))/sqrt(deltat))-1)*(ones(15,1))*deltat);
+  DeltaW3(:, 1) = DeltaW3(1:15, 2);
+  DeltaW3(:, 2) = sqrt(deltat)*rand(15,1);
 endfor
 %
 %Figura 1
