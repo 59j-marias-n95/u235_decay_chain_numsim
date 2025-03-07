@@ -1,5 +1,5 @@
-%clc
-%clear
+clc
+clear
 format longe;
 
 #Simulación numérica de la cadena de desintegración del uranio 235 mediante
@@ -7,13 +7,13 @@ format longe;
 %tiempo0 = clock();
 
 #Definición del número de átomos en una muestra de 7.2331 kg de U235.
-%atomosU235=(7.2331e+03)*(1/238.03)*(6.022e+23);
-atomosU235 = 9.999e+18;
+atomosU235=(7.2331e+03)*(1/238.03)*(6.022e+23);
+%atomosU235 = 1.0e+15;
 
 #Definición del intervalo de tiempo sobre la cual se simulará la desintegración.
 #Se corre la variable t, tiempo, desde 0 años hasta 9e+9 años en pasos de 1000
 #años.
-t=0:220:2.2e+4;
+t=0:200:2.0e+5;
 
 #Definición del vectores de coeficientes de desintegración nuclear para cada
 #elemento de la cadena incluyendo el isotopo estable PB207 al que se le atribuye
@@ -61,7 +61,6 @@ for i = 1:15
   exponenciales(:,i)=exp(valores(i,i)*t);
 endfor
 
-
 nucleo1 = exponenciales*Vectores(1,:)';
 nucleo2 = exponenciales*Vectores(2,:)';
 nucleo3 = exponenciales*Vectores(3,:)';
@@ -78,7 +77,6 @@ nucleo13 = exponenciales*Vectores(13,:)';
 nucleo14 = exponenciales*Vectores(14,:)';
 nucleo15 = exponenciales*Vectores(15,:)';
 %{
-%
 %Figura 1
 figure(1,"position",[0, 0, 1200, 1000])
 hold on
@@ -205,4 +203,4 @@ xlabel('t/a', 'fontsize', 12)
 ylabel('N(t)/núcleos', 'fontsize', 12)
 legend('N_{15}: Pb207')
 figure7 = axes('visible', 'off', 'title', 'Gráficas del número de núcleos en el tiempo para N_{15}: Pb207.', 'fontsize', 14)
-}%
+

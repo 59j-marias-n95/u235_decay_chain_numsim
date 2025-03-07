@@ -30,7 +30,7 @@ M(15,14)=lambda(14);
 DeltaN = [[-1, 1, zeros(1, 13)]', [0, -1, 1, zeros(1, 12)]', [zeros(1, 2), -1, 1,zeros(1, 11)]', [zeros(1, 3), -1, 1, 1,zeros(1, 9)]',[zeros(1, 4), -1, 0, 1, zeros(1, 8)]', [zeros(1, 5), -1, 1, zeros(1, 8)]', [zeros(1, 6), -1, 1, zeros(1, 7)]', [zeros(1, 7), -1, 1, zeros(1, 6)]',[zeros(1, 8), -1, 1, 1, zeros(1, 4)]', [zeros(1, 9), -1, 0, 1, zeros(1, 3)]', [zeros(1, 10), -1, 1, zeros(1, 3)]', [zeros(1, 11), -1, 1, 1, 0]',[zeros(1, 12), -1, 0, 1]', [zeros(1, 13), -1, 1]', zeros(1, 15)'];
 
 %La escala de tiempo
-m = 1.00e+01;
+m = 1.00e+04;
 deltat = 2.0e+02;
 
 %El numero inicial de particulas: (7.2331e+03)*(1/238.03)*(6.022e+23)
@@ -57,13 +57,17 @@ for a = 1:m
 
   %Calculo de la covarianza matriz
   for k = 1:15
-    Sigmat = Sigmat + P(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
-    Sigmat2 = Sigmat2 + P2(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
-    Sigmat3 = Sigmat3 + P3(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
+    Sigmat = Sigmat + P(k, a)*DeltaN(:, k)*DeltaN(:, k)';
+    Sigmat2 = Sigmat2 + P2(k, a)*DeltaN(:, k)*DeltaN(:, k)';
+    Sigmat3 = Sigmat3 + P3(k, a)*DeltaN(:, k)*DeltaN(:, k)';
   endfor
   [X, sigmat] = lu(Sigmat);
   [X, sigmat2] = lu(Sigmat2);
   [X, sigmat3] = lu(Sigmat3);
+
+  sigmat = sqrt(deltat)*sigmat;
+  sigmat2 = sqrt(deltat)*sigmat2;
+  sigmat3 = sqrt(deltat)*sigmat3;
 
   Y1(:,a) = N(:, a) + sigmat*(DeltaW(:,2)-DeltaW(:,1));
   Y2(:,a) = N2(:, a) + sigmat2*(DeltaW2(:,2)-DeltaW2(:,1));
@@ -80,34 +84,36 @@ for a = 1:m
 
   %Calculo de la covarianza matriz
   for k = 1:15
-    SigmatY = SigmatY + PY(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
-    SigmatY2 = SigmatY2 + PY2(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
-    SigmatY3 = SigmatY3 + PY3(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
+    SigmatY = SigmatY + PY(k, a)*DeltaN(:, k)*DeltaN(:, k)';
+    SigmatY2 = SigmatY2 + PY2(k, a)*DeltaN(:, k)*DeltaN(:, k)';
+    SigmatY3 = SigmatY3 + PY3(k, a)*DeltaN(:, k)*DeltaN(:, k)';
   endfor
 
   [X, sigmatY] = lu(SigmatY);
-  [X, sigmatY2] = lu(Sigmat2);
-  [X, sigmatY3] = lu(Sigmat3);
+  [X, sigmatY2] = lu(SigmatY2);
+  [X, sigmatY3] = lu(SigmatY3);
+
+  sigmatY = sqrt(deltat)*sigmatY;
+  sigmatY2 = sqrt(deltat)*sigmatY2;
+  sigmatY3 = sqrt(deltat)*sigmatY3;
 
   %El ruido blanco
-N(:,a+1)=pinv(eye(15)-deltat*M)*(N(:,a)+sigmat*(DeltaW(:,2)-DeltaW(:,1))*deltat+0.5*(sigmatY-sigmat)*(((DeltaW(:,2)-DeltaW(:,1))/sqrt(deltat))'*((DeltaW(:,2)-DeltaW(:,1))/sqrt(deltat))-1)*(ones(15,1))*deltat);
-  DeltaW(:, 1) = DeltaW(1:15, 2);
+N(:,a+1)=pinv(eye(15)-deltat*M)*(N(:,a)+sigmat*(DeltaW(:,2)-DeltaW(:,1))+0.5*sqrt(deltat)*(sigmatY-sigmat)*(((DeltaW(:,2)-DeltaW(:,1))/sqrt(deltat)).^2-1));
+  DeltaW(:, 1) = DeltaW(:, 2);
   DeltaW(:, 2) = sqrt(deltat)*rand(15,1);
 
-N2(:,a+1)=pinv(eye(15)-deltat*M)*(N2(:,a)+sigmat2*(DeltaW2(:,2)-DeltaW2(:,1))*deltat+0.5*(sigmatY2-sigmat2)*(((DeltaW2(:,2)-DeltaW2(:,1))/sqrt(deltat))'*((DeltaW2(:,2)-DeltaW2(:,1))/sqrt(deltat))-1)*(ones(15,1))*deltat);
-  DeltaW2(:, 1) = DeltaW2(1:15, 2);
+N2(:,a+1)=pinv(eye(15)-deltat*M)*(N2(:,a)+sigmat2*(DeltaW2(:,2)-DeltaW2(:,1))+0.5*sqrt(deltat)*(sigmatY2-sigmat2)*(((DeltaW2(:,2)-DeltaW2(:,1))/sqrt(deltat)).^2-1));
+  DeltaW2(:, 1) = DeltaW2(:, 2);
   DeltaW2(:, 2) = sqrt(deltat)*rand(15,1);
 
-N3(:,a+1)=pinv(eye(15)-deltat*M)*(N3(:,a)+sigmat3*(DeltaW3(:,2)-DeltaW3(:,1))*deltat+0.5*(sigmatY3-sigmat3)*(((DeltaW3(:,2)-DeltaW3(:,1))/sqrt(deltat))'*((DeltaW3(:,2)-DeltaW3(:,1))/sqrt(deltat))-1)*(ones(15,1))*deltat);
-  DeltaW3(:, 1) = DeltaW3(1:15, 2);
+N3(:,a+1)=pinv(eye(15)-deltat*M)*(N3(:,a)+sigmat3*(DeltaW3(:,2)-DeltaW3(:,1))+0.5*sqrt(deltat)*(sigmatY3-sigmat3)*(((DeltaW3(:,2)-DeltaW3(:,1))/sqrt(deltat)).^2-1));
+  DeltaW3(:, 1) = DeltaW3(:, 2);
   DeltaW3(:, 2) = sqrt(deltat)*rand(15,1);
 endfor
 
 for a = 1:m
   EN(:, a) = (N(:,a) + N2(:,a) + N3(:,a))./(3);
 endfor
-
-EN(isnan(EN(:,:))==1)=0;
 
 #Definición del intervalo de tiempo sobre la cual se simulará la desintegración.
 #Se corre la variable t, tiempo, desde 0 años hasta 9e+9 años en pasos de 1000
@@ -140,91 +146,91 @@ Errores'
 
 %{
 figure(1)
-semilogx(EN(1, :))
+semilogx(EN(1, 1:m))
 hold on
-semilogx(nucleos(1, :))
+semilogx(nucleos(1, 1:m))
 hold off
 
 figure(2)
-semilogx(EN(2, :))
+semilogx(EN(2, 1:m))
 hold on
-semilogx(nucleos(2, :))
+semilogx(nucleos(2, 1:m))
 hold off
 
 figure(3)
-semilogx(EN(3, :))
+semilogx(EN(3, 1:m))
 hold on
-semilogx(nucleos(3, :))
+semilogx(nucleos(3, 1:m))
 hold off
 
 figure(4)
-semilogx(EN(4, :))
+semilogx(EN(4, 1:m))
 hold on
-semilogx(nucleos(4, :))
+semilogx(nucleos(4, 1:m))
 hold off
 
 figure(5)
-semilogx(EN(5, :))
+semilogx(EN(5, 1:m))
 hold on
-semilogx(nucleos(5, :))
+semilogx(nucleos(5, 1:m))
 hold off
 
 figure(6)
-semilogx(EN(6, :))
+semilogx(EN(6, 1:m))
 hold on
-semilogx(nucleos(6, :))
+semilogx(nucleos(6, 1:m))
 hold off
 
 figure(7)
-semilogx(EN(7, :))
+semilogx(EN(7, 1:m))
 hold on
-semilogx(nucleos(7, :))
+semilogx(nucleos(7, 1:m))
 hold off
 
 figure(8)
-semilogx(EN(8, :))
+semilogx(EN(8, 1:m))
 hold on
-semilogx(nucleos(8, :))
+semilogx(nucleos(8, 1:m))
 hold off
 
 figure(9)
-semilogx(EN(9, :))
+semilogx(EN(9, 1:m))
 hold on
-semilogx(nucleos(9, :))
+semilogx(nucleos(9, 1:m))
 hold off
 
 figure(10)
-semilogx(EN(10, :))
+semilogx(EN(10, 1:m))
 hold on
-semilogx(nucleos(10, :))
+semilogx(nucleos(10, 1:m))
 hold off
 
 figure(11)
-semilogx(EN(11, :))
+semilogx(EN(11, 1:m))
 hold on
-semilogx(nucleos(11, :))
+semilogx(nucleos(11, 1:m))
 hold off
 
 figure(12)
-semilogx(EN(12, :))
+semilogx(EN(12, 1:m))
 hold on
-semilogx(nucleos(12, :))
+semilogx(nucleos(12, 1:m))
 hold off
 
 figure(13)
-semilogx(EN(13, :))
+semilogx(EN(13, 1:m))
 hold on
-semilogx(nucleos(13, :))
+semilogx(nucleos(13, 1:m))
 hold off
 
 figure(14)
-semilogx(EN(14, :))
+semilogx(EN(14, 1:m))
 hold on
-semilogx(nucleos(14, :))
+semilogx(nucleos(14, 1:m))
 hold off
 
 figure(15)
-semilogx(EN(15, :))
+semilogx(EN(15, 1:m))
 hold on
-semilogx(nucleos(15, :))
+semilogx(nucleos(15, 1:m))
 hold off}%

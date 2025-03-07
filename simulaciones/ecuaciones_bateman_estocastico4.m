@@ -34,8 +34,8 @@ m = 1.0e3;
 deltat = 2.0e2;
 
 %El numero inicial de particulas: (7.2331e+03)*(1/238.03)*(6.022e+23)
-%atomosu235 = (7.2331e+03)*(1/238.03)*(6.022e+23);
-N0 = 1e+15;
+%N0 = (7.2331e+03)*(1/238.03)*(6.022e+23);
+N0 = 9.9999e+14;
 N = [[N0, zeros(1,14)]', zeros(15, 1)];
 N2 = [[N0, zeros(1,14)]', zeros(15, 1)];
 N3 = [[N0, zeros(1,14)]', zeros(15, 1)];
@@ -57,13 +57,17 @@ for a = 1:m
 
   %Calculo de la covarianza matriz
   for k = 1:15
-    Sigmat = Sigmat + P(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
-    Sigmat2 = Sigmat2 + P2(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
-    Sigmat3 = Sigmat3 + P3(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
+    Sigmat = Sigmat + P(k, a)*DeltaN(:, k)*DeltaN(:, k)';
+    Sigmat2 = Sigmat2 + P2(k, a)*DeltaN(:, k)*DeltaN(:, k)';
+    Sigmat3 = Sigmat3 + P3(k, a)*DeltaN(:, k)*DeltaN(:, k)';
   endfor
   [X, sigmat] = lu(Sigmat);
   [X, sigmat2] = lu(Sigmat2);
   [X, sigmat3] = lu(Sigmat3);
+
+  sigmat = sqrt(deltat)*sigmat;
+  sigmat2 = sqrt(deltat)*sigmat2;
+  sigmat3 = sqrt(deltat)*sigmat3;
 
   Y1(:,a) = N(:, a) + sigmat*(DeltaW(:,2)-DeltaW(:,1));
   Y2(:,a) = N2(:, a) + sigmat2*(DeltaW2(:,2)-DeltaW2(:,1));
@@ -80,26 +84,30 @@ for a = 1:m
 
   %Calculo de la covarianza matriz
   for k = 1:15
-    SigmatY = SigmatY + PY(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
-    SigmatY2 = SigmatY2 + PY2(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
-    SigmatY3 = SigmatY3 + PY3(k, a)*DeltaN(1:15, k)*DeltaN(1:15, k)';
+    SigmatY = SigmatY + PY(k, a)*DeltaN(:, k)*DeltaN(:, k)';
+    SigmatY2 = SigmatY2 + PY2(k, a)*DeltaN(:, k)*DeltaN(:, k)';
+    SigmatY3 = SigmatY3 + PY3(k, a)*DeltaN(:, k)*DeltaN(:, k)';
   endfor
 
   [X, sigmatY] = lu(SigmatY);
-  [X, sigmatY2] = lu(Sigmat2);
-  [X, sigmatY3] = lu(Sigmat3);
+  [X, sigmatY2] = lu(SigmatY2);
+  [X, sigmatY3] = lu(SigmatY3);
+
+  sigmatY = sqrt(deltat)*sigmatY;
+  sigmatY2 = sqrt(deltat)*sigmatY2;
+  sigmatY3 = sqrt(deltat)*sigmatY3;
 
   %El ruido blanco
-N(:,a+1)=pinv(eye(15)-deltat*M)*(N(:,a)+sigmat*(DeltaW(:,2)-DeltaW(:,1))*deltat+0.5*(sigmatY-sigmat)*(((DeltaW(:,2)-DeltaW(:,1))/sqrt(deltat))'*((DeltaW(:,2)-DeltaW(:,1))/sqrt(deltat))-1)*(ones(15,1))*deltat);
-  DeltaW(:, 1) = DeltaW(1:15, 2);
+N(:,a+1)=pinv(eye(15)-deltat*M)*(N(:,a)+sigmat*(DeltaW(:,2)-DeltaW(:,1))+0.5*sqrt(deltat)*(sigmatY-sigmat)*(((DeltaW(:,2)-DeltaW(:,1))/sqrt(deltat)).^2-1));
+  DeltaW(:, 1) = DeltaW(:, 2);
   DeltaW(:, 2) = sqrt(deltat)*rand(15,1);
 
-N2(:,a+1)=pinv(eye(15)-deltat*M)*(N2(:,a)+sigmat2*(DeltaW2(:,2)-DeltaW2(:,1))*deltat+0.5*(sigmatY2-sigmat2)*(((DeltaW2(:,2)-DeltaW2(:,1))/sqrt(deltat))'*((DeltaW2(:,2)-DeltaW2(:,1))/sqrt(deltat))-1)*(ones(15,1))*deltat);
-  DeltaW2(:, 1) = DeltaW2(1:15, 2);
+N2(:,a+1)=pinv(eye(15)-deltat*M)*(N2(:,a)+sigmat2*(DeltaW2(:,2)-DeltaW2(:,1))+0.5*sqrt(deltat)*(sigmatY2-sigmat2)*(((DeltaW2(:,2)-DeltaW2(:,1))/sqrt(deltat)).^2-1));
+  DeltaW2(:, 1) = DeltaW2(:, 2);
   DeltaW2(:, 2) = sqrt(deltat)*rand(15,1);
 
-N3(:,a+1)=pinv(eye(15)-deltat*M)*(N3(:,a)+sigmat3*(DeltaW3(:,2)-DeltaW3(:,1))*deltat+0.5*(sigmatY3-sigmat3)*(((DeltaW3(:,2)-DeltaW3(:,1))/sqrt(deltat))'*((DeltaW3(:,2)-DeltaW3(:,1))/sqrt(deltat))-1)*(ones(15,1))*deltat);
-  DeltaW3(:, 1) = DeltaW3(1:15, 2);
+N3(:,a+1)=pinv(eye(15)-deltat*M)*(N3(:,a)+sigmat3*(DeltaW3(:,2)-DeltaW3(:,1))+0.5*sqrt(deltat)*(sigmatY3-sigmat3)*(((DeltaW3(:,2)-DeltaW3(:,1))/sqrt(deltat)).^2-1));
+  DeltaW3(:, 1) = DeltaW3(:, 2);
   DeltaW3(:, 2) = sqrt(deltat)*rand(15,1);
 endfor
 %

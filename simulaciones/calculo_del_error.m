@@ -87,8 +87,6 @@ for a = 1:m
   EN(:, a) = (N(:,a) + N2(:,a) + N3(:,a))./(3);
 endfor
 
-EN(isnan(EN(:,:))==1)=0;
-
 #Definición del intervalo de tiempo sobre la cual se simulará la desintegración.
 #Se corre la variable t, tiempo, desde 0 años hasta 9e+9 años en pasos de 1000
 #años.
